@@ -1,10 +1,11 @@
-Title: Витягаємо список полів з ModleForm в Django
+Title: Витягаємо список полів з ModelForm в Django
 Date: 2016-06-22 22:00
 Category: Django
 Tags: django, python
 Slug: get-fields-from-django-modelform
 Image: /images/django.jpg
 Lang: uk
+Summary: Як просто отримати список всіх доступних полів з ModelForm.
 
 Довелось мені покривати тестами форму в проекті, всі поля в тестах звісно задавались руками і
 хотілось би якось позбавитись рутинної правки тесту, щоразу коли додаєш звичайне поле.  Рішення було
