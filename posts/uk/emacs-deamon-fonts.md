@@ -5,7 +5,7 @@ Summary: Виправляємо причину, та налаштовуємо н
 Category: Emacs
 Lang: uk
 Image: /images/segfault.png
-Tags: emacs, bug, lisp, segfault
+Tags: emacs, bug, lisp
 
 ![Segfault](/images/segfault.png)
 : Авторство: XKCD.com
@@ -63,7 +63,7 @@ Tags: emacs, bug, lisp, segfault
 Раніше не пам'ятаю вже навіщо я викладав відео яке демонструє, як працює Emacs в режимі демона:
 
 <div class="embed-responsive embed-responsive-16by9">
-<iframe class="embed-responsive-item" src="https://www.youtube.com/watch?v=01AvPRexOO0">
+<iframe class="embed-responsive-item" src="https://www.youtube.com/embed/01AvPRexOO0">
 </iframe>
 </div>
 
