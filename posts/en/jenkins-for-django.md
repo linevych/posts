@@ -1,7 +1,7 @@
 Title: How to configure Jenkins for Django multibranch project
-Date: 2016-08-7
+Date: 2016-09-25
 Category: Django
-Tags: django, jenkins, devops, linux, contintious integration, CI
+Tags: django, jenkins, devops, linux, continuous integration, CI
 Slug: django-jenkins
 Image: /images/django.jpg
 Lang: en
@@ -65,7 +65,7 @@ sudo /etc/init.d/jenkins start
 
 ### Basic setup
 
-After Jenkins was runned you can acces it via `<ip-address>:8080` for me it will be
+After Jenkins was run you can access it via `<ip-address>:8080` for me it will be
 `127.0.0.1:8080`.
 
 ![Fresh installation of jenkins](/images/jenkins/jenkins-password.png)
@@ -96,22 +96,22 @@ Installation finished now we can configure it.
 
 ### Installation of necessary plugins
 
-__Before__ creation any jobs we need to install plugins, because we need specific project type
+__Before__ creation any jobs we need to install plugins because we need specific project type
 support.
 
-First you need to got to "Manage Jenkins" section:
+First, you need to get to "Manage Jenkins" section:
 
 ![Jenkins is ready to use](/images/jenkins/jenkins-manage.png)
 
 And then to "Manage plugins":
 ![Jenkins is ready to use](/images/jenkins/jenkins-manage-plugins.png)
 
-Here you need to go to "Avaliable" tab and search & install for following plugins:
+Here you need to go to "Available" tab and search & install for following plugins:
 
-- __Multi-Branch Project Plugin__ --- allows you to process mutltiple branches in one time.
+- __Multi-Branch Project Plugin__ --- allows you to process multiple branches in one time.
 - __Cobertura Plugin__ --- code coverage reports plugin.
-- __JUnit__ _&nbsp;(if not intstalled)_ --- required for publishing tests results.
-- _HipChat Plugin (optional)_ --- notify your team if something breakes in the HipChat.
+- __JUnit__ _&nbsp;(if not installed)_ --- required for publishing tests results.
+- _HipChat Plugin (optional)_ --- notify your team if something breaks in the HipChat.
 
 ![Plugins installation | Jenkins](/images/jenkins/jenkins-install-plugins.png)
 
@@ -122,12 +122,12 @@ __"Freestyle multibranch project"__ type.
 
 ![Freestyle multibranch project | Jenkins](/images/jenkins/jenkins-new-project.png)
 
-At first we will need to configure VCS for our project, go to section "Branch sources" and enter
-your project url.
+At first, we will need to configure VCS for our project, go to section "Branch sources" and enter
+your project URL.
 
 ![Configure VCS for new project | Jenkins](/images/jenkins/jenkins-vcs-configuration.png)
 
-Also you will need to enter your credentials to access code, press "Add" - "Jenkins" and enter your
+Also, you will need to enter your credentials to access code, press "Add" - "Jenkins" and enter your
 GitHub username and password or, choose other credentials type.
 
 ![Adding new credentials | Jenkins](/images/jenkins/jenkins-access.png)
@@ -141,7 +141,7 @@ step"__, and choose __"Execute shell"__ from the dropdown menu.
 
 ![Adding branch settings](/images/jenkins/jenkins-build-setup.png)
 
-In the text area that appears we need add following code:
+In the text area that appears we need to add following code:
 
 ```
 :::bash
@@ -165,7 +165,7 @@ env/bin/python3.5 ./manage.py jenkins --noinput --enable-coverage --parallel 2
 ### Requirements
 
 To avoid unnecessary packages in main project virtualenv we will need to create `requiements_ci.txt`
-file that extends your basic project requiements list.
+file that extends your basic project requirements list.
 
 ```
 -r requirements.txt
@@ -177,7 +177,7 @@ tblib
 
 ### Separated settings for CI
 
-We will need to create separeate settings file named `settings_ci.py` with the following code:
+We will need to create separate settings file named `settings_ci.py` with the following code:
 
 ```
 :::python
@@ -240,7 +240,7 @@ This is basic setup, for more information you can read
 
 ### HipChat integration
 
-## Used sources
+## Sources
 
 1. [Installing Jenkins on Ubuntu &mdash; Jenkins &mdash; Jenkins Wiki](https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu){:rel=nofollow}.
 2. [Continious Integration Testing](http://www.slideshare.net/kevincreedharvey/continuous-integration-testing-django-ap){:rel=nofollow}.
