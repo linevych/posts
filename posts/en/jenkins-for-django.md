@@ -1,5 +1,5 @@
 Title: How to configure Jenkins for Django multibranch project
-Date: 2016-09-25
+Date: 2016-11-25
 Category: Django
 Tags: django, jenkins, devops, linux, continuous integration, CI
 Slug: django-jenkins
@@ -68,7 +68,7 @@ sudo /etc/init.d/jenkins start
 After Jenkins was run you can access it via `<ip-address>:8080` for me it will be
 `127.0.0.1:8080`.
 
-![Fresh installation of jenkins](/images/jenkins/jenkins-password.png)
+![Fresh installation of Jenkins](/images/jenkins/jenkins-password.png)
 
 You need to enter password which can be get by typing:
 
@@ -88,7 +88,7 @@ Then you need to create first user:
 
 ![User creation process in jenkins](/images/jenkins/jenkins-create-user.png)
 
-Installation finished now we can configure it.
+Installation finished now we can configure our Jenkins instnace.
 
 ![Jenkins is ready to use](/images/jenkins/jenkins-ready-to-use.png)
 
@@ -235,8 +235,6 @@ This is basic setup, for more information you can read
 ## Manage final result
 
 ## Extras
-
-### Security notes
 
 ### HipChat integration
 
