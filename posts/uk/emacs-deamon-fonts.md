@@ -1,5 +1,5 @@
 Title: Виправляємо Segfault при запуску Emacs в режимі демона
-Date: 12/08/2016
+Date: 08/12/2016
 Slug: emacs-daemon-fonts
 Summary: Виправляємо причину, та налаштовуємо нормальні шрифти.
 Category: Emacs
