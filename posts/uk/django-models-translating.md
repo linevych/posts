@@ -3,7 +3,7 @@ Date: 2015-01-22 01:29
 Category: Django
 Tags: django, переклади, інтернаціоналізація, python
 Slug: django-models-translating
-Image: /images/django.png
+Image: /images/django.jpg
 Lang: uk
 
 Під час роботи над одним із проектів мені знадобилась підтримка декількох мов, в якості інструменту було вибрано
