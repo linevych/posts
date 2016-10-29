@@ -4,6 +4,7 @@ Tags: emacs, ergoemacs, lisp, gnu, tutorial
 Slug: emacs-for-non-octopus-p1
 Image: /images/octopus.jpg
 Date: 22/10/2016
+Lang: uk
 Summary: Чи справді Emacs був придуманий восьминогами?
           Як бути якщо в тебе немає щупалець?
 
