@@ -1,5 +1,5 @@
 Title: Виправляємо Segfault при запуску Emacs в режимі демона
-Date: 12/08/2016
+Date: 08/12/2016
 Slug: emacs-daemon-fonts
 Summary: Виправляємо причину, та налаштовуємо нормальні шрифти.
 Category: Emacs
@@ -38,7 +38,7 @@ Tags: emacs, bug, lisp
       (set-frame-font "Roboto Mono-9" nil t)))
 ```
 
-Але тут виявилось, що при запуску `emacsclient -c` цей код виконуватись не буде, тобто треба щось
+Але тут виявилось, що при запуску `emacsclient -c` цей код виконуватись не буде, тобто треба щось,
 щоб при створенні нового фрейму задавало шрифт.
 
 Великий і всемогутній StackOverFlow підказав мені
@@ -60,10 +60,9 @@ Tags: emacs, bug, lisp
 
 ## P.S
 
-Раніше не пам'ятаю вже навіщо я викладав відео яке демонструє, як працює Emacs в режимі демона:
+Раніше, не пам'ятаю вже навіщо, я викладав відео яке демонструє, як працює Emacs в режимі демона:
 
 <div class="embed-responsive embed-responsive-16by9">
 <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/01AvPRexOO0">
 </iframe>
 </div>
-
