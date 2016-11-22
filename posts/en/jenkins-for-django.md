@@ -6,11 +6,22 @@ Slug: django-jenkins
 Image: /images/django.jpg
 Lang: en
 
-[TOC]
+One day we (our work team) where tired to launch tests manually before every push and wait until
+eveything passed in parrent branch then merge it to master, and do the same thing again. To simplify
+this process and exclude the situations when somebody is forgeting about tests in a hurry, we
+decided that we probably need to automate this process.
+
+The choise fell on Jenkins because we where searching for free, Open Source and self-hosted
+soulution that can be esily integrated with in any third party app including Django integration.
+
+So here is the short tutorial how to get everything to work and save your time.
 
 ## Installation
 
-### Configuring the system
+In our case most of servers working on Ubuntu/Debian so this tutorial oriented for this two systems.
+
+Recommended requirements:
+
 - __OS__: Debian 8 or Ubuntu 16.04
 - __CPU__: 2 cores
 - __RAM__: 1-2GB
@@ -18,7 +29,7 @@ Lang: en
 [DigitalOcean](https://m.do.co/c/6463f665f8bc){:rel=nofollow} droplet for $20/mo will ideally pass
 your needs.
 
-First we need to create user for our jenkins instance:
+First we need to create user for our CI future CI server:
 
 ```
 :::bash
@@ -26,7 +37,7 @@ First we need to create user for our jenkins instance:
 adduser jenkins
 su jenkins
 ```
-### Getting Jenkins
+Then add necessary repositories and instal Jenkins:
 
 ```
 :::bash
@@ -40,9 +51,9 @@ sudo apt-get install jenkins
 sudo nano /etc/default/jenkins # Editing config
 ```
 
-Now you need to set `JENKINS_HOME=/home/$NAME` in config file `/etc/default/jenkins`.
+Now you need to set variable `JENKINS_HOME=/home/$NAME` in config file `/etc/default/jenkins`.
 
-After successful installation you can launch your CI server:
+Now we can just run it:
 
 ```
 :::bash
@@ -70,7 +81,7 @@ After Jenkins was run you can access it via `<ip-address>:8080` for me it will b
 
 ![Fresh installation of Jenkins](/images/jenkins/jenkins-password.png)
 
-You need to enter password which can be get by typing:
+You need to enter password which can be get by typing the following:
 
 ```
 :::bash
@@ -80,15 +91,16 @@ a3cc46430ff249df9b1b4ce0ff90dcba # Password example that you would get
 
 ```
 
-Next step, you will need to choose "Install proposed plugins" and wait until installation finished.
+Next step, you will be able to choose plugins what you wan't to install I would recommend to choose
+"Install proposed plugins" as a basic pack and then we will install manually all the other things.
 
 ![Installation of suggested plugins](/images/jenkins/jenkins-install-suggested-plugins.png)
 
-Then you need to create first user:
+Ok, plugins installed now it's time to create our first user:
 
 ![User creation process in jenkins](/images/jenkins/jenkins-create-user.png)
 
-Installation finished now we can configure our Jenkins instnace.
+That's it! Installation finished, now we can configure our Jenkins instnace.
 
 ![Jenkins is ready to use](/images/jenkins/jenkins-ready-to-use.png)
 
