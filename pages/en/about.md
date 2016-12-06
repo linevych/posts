@@ -1,4 +1,6 @@
-Title: About the author Lang: en Slug: about
+Title: About the author
+Lang: en
+Slug: about
 
 Hi, my name is Anton, I'm an author of this blog and Full Stack Python Developer
 at [SoftFormance](https://softformance.com){rel=noindex target=_blank}.
