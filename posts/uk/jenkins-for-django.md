@@ -5,6 +5,7 @@ Tags: django, jenkins, devops, linux, continuous integration, CI, ubuntu, debian
 Slug: django-jenkins
 Image: /images/django.jpg
 Lang: uk
+Status: draft
 
 Оскільки я працюю Full Stack Python розробгником, то мені часто доводиться стикатись з завданнями
 які не відносатся до Python чи навіть до написання коду взагалі. Коли ми втомились від необхідності

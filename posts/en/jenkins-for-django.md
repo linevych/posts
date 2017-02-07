@@ -14,13 +14,13 @@ decided that we probably need to automate this process.
 The choise fell on Jenkins because we where searching for free, Open Source and self-hosted
 soulution that can be esily integrated with in any third party app including Django integration.
 
-So here is the short tutorial how to get everything to work and save your time.
+So here is the short tutorial about how to get everything to work and save your time.
 
 ## Installation
 
-In our case most of servers working on Ubuntu/Debian so this tutorial oriented for this two systems.
+In our case most of servers working on Ubuntu/Debian, so this tutorial oriented for this two distros.
 
-Recommended requirements:
+Recommended configuration:
 
 - __OS__: Debian 8 or Ubuntu 16.04
 - __CPU__: 2 cores
@@ -196,6 +196,8 @@ We will need to create separate settings file named `settings_ci.py` with the fo
 
 import string
 import random
+
+# Import from your base settings files
 from .settings import *
 
 
@@ -211,6 +213,8 @@ DEBUG = True
 INTERNAL_IPS = ['127.0.0.1', 'localhost', 'example.com']
 ALLOWED_HOSTS = INTERNAL_IPS
 
+
+# Settings up datasbse, in my case it will be PostgrSQL
 user = 'postgres'
 password = 'postgres'
 host = '127.0.0.1'
