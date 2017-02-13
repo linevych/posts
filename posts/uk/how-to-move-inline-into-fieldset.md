@@ -1,10 +1,10 @@
-Title: Django admin: Inline в Fieldset'і або як впихнути невпихуєме.
+Title: Django admin: Inline в Fieldset'і або як впихнути невпихуєме
 Date: 13-02-2017
 Slug: django-inline-in-fieldset
 Category: Django
 Lang: uk
-Image: None
-Featured_image: None
+Image: /images/django-inline-in-fieldset-with-css.png
+Featured_image: /images/django-inline-in-fieldset-with-css.png
 Tags: django, python, admin, StackOverFlow-driven development
 Summary: 
 
