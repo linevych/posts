@@ -1,4 +1,4 @@
-Title: Django admin: Inline in Fieldset
+Title: Django admin: How to insert Inline between fields
 Date: 13-02-2017
 Slug: django-inline-in-fieldset
 Category: Django
@@ -6,7 +6,7 @@ Lang: en
 Image: /images/django-inline-in-fieldset-with-css.png
 Featured_image: /images/django-inline-in-fieldset-with-css.png
 Tags: django, python, admin, StackOverflow-driven development
-Summary: 
+Summary: Ready to use snippet to solve your problem with blackjack and hookers ;)
 
 
 The positioning of the TabularInline, it would seem to be a simple task. Most of Django developers
