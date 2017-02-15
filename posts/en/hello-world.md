@@ -1,4 +1,4 @@
-Title: Hello world
+Title: Hello world or English verson of the blog.
 Date: 15-02-2017
 Slug: hello-world
 Category: From the author
@@ -6,7 +6,7 @@ Lang: en
 Image: /images/rocket.jpg
 Featured_image: /images/rocket.jpg
 Tags: blog
-Summary: Who is Mr. Linevych?
+Summary: Hi, I think I need to write something like this post and I guess nobody will read this, but it doesn't matter.
 Draft: False
 
 Hi, I think I need to write something like this post and I guess nobody will read this, but it
