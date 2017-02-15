@@ -5,13 +5,13 @@ Category: Django
 Lang: en
 Image: /images/django-inline-in-fieldset-with-css.png
 Featured_image: /images/django-inline-in-fieldset-with-css.png
-Tags: django, python, admin, StackOverFlow-driven development
+Tags: django, python, admin, StackOverflow-driven development
 Summary: 
 
 
-Poistioning of the TabularInline, it would seem to be a simple task. Most of Django develepers face
-this challenge when the size of ModelAdmin becomes bigger then the several "screens" and ordering
-becomes critical for the usability.
+The positioning of the TabularInline, it would seem to be a simple task. Most of Django developers
+face this challenge when the size of ModelAdmin becomes bigger than the several "screens" and
+ordering becomes critical for the usability.
 
 ## Problem
 
@@ -95,12 +95,12 @@ sequence item 0: expected str instance, MediaDefiningClass found
 
 ## Solution
 
-In all variatons of this problem at StackOverFlow we can find an abstract answer like: "customize
-`change_form.html`", but for some reason I can't find any ready to use snippet, so here is my own.
+In all variations of this problem at StackOverflow, we can find an abstract answer like: "customize
+`change_form.html`", but for some reason, I can't find any of the ready to use snippets, so here is my own.
 
 __admin.py__
 
-To start let's define the class variable `insert_after` in the `ImageInline`, and set that we wan't to see that
+To start let's define the class variable `insert_after` in the `ImageInline`, and set that we want to see that
 inline after the field "title" and put `ImageInline` to the appropriate list.
 
 ```
@@ -217,7 +217,7 @@ After that we can "enjoy" of the following:
 
 ![Django TabularInline in fieldset](/images/django-inline-in-fieldset.png)
 
-Still only need to fix some CSS, to protect the perfectionst form an eye bleeding:
+Still only need to fix some CSS, to protect the perfectionists from an eye bleeding:
 
 __static/css/admin.css__
 
@@ -242,7 +242,7 @@ Project on the Github<i class="material-icons">open_in_new</i>
 
 ![The inline at the fieldset. Django Admin](/images/django-inline-in-fieldset-with-css.png)
 
-English is not my mothertongue so if you have found any mistakes or know how to improve this text
+English is not my mother tongue so if you have found any mistakes or know how to improve this text
 please contact me directly.
 
-If I've saved a little of your time please share this post in the social networks. Thanks!
+If I've saved a little of your time please share this post on the social networks. Thanks!
