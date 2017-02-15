@@ -18,7 +18,7 @@ notes and thoughts about Python, Django, Linux and all the topics I've intereste
 
 First of all, this helps me to better understand what I've learned, systematize my knowledge. I hope
 it will improve my language skills because English is not my mother tongue, so if you find any
-mistakes or things that can be improved into the text, please let me know.
+mistakes or things that can be improved, please let me know.
 
 For some reason comments for English and Ukrainian version now displays to all of the articles, I
 don't think it's a big issue but will try to fix it shortly.
