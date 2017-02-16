@@ -70,5 +70,5 @@ print(get_all_fields_from_form(MyForm))
 
 ## P.S
 
-It looks a bit wired complicated, but if you know better way to do that, please leave it in a
+It looks a bit wired and complicated, but if you know better way to do that, please leave it in a
 comments.
