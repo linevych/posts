@@ -1,5 +1,5 @@
 Title: Hello world or English verson of the blog.
-Date: 12-02-2017
+Date: 2017-02-12
 Slug: hello-world
 Category: From the author
 Lang: en
