@@ -41,6 +41,39 @@ def get_all_fields_from_form(instance):
     return fields
 ```
 
+## Improved solution
+
+After I've posted this article on the Reddit, I've got
+the
+[comment](https://www.reddit.com/r/django/comments/5ubix3/how_to_get_list_of_all_fields_from_django/ddsvp68/) from
+[Nicksil](https://www.reddit.com/user/Nicksil) that makes me feel stupid, the function can be
+implemented much simpler:
+
+```
+:::python
+
+def get_all_fields_from_form(instance):
+    """"
+    Return names of all available fields from given Form instance.
+
+    :arg instance: Form instance
+    :returns list of field names
+    :rtype: list
+    """
+
+    fields = list(instance().base_fields)
+
+    for field in list(instance().declared_fields):
+        if field not in fields:
+            fields.append(field)
+    return fields
+
+
+```
+
+That's it!
+
+
 ## Usage
 
 ```
@@ -68,7 +101,3 @@ print(get_all_fields_from_form(MyForm))
 ['field3', 'field4']
 ```
 
-## P.S
-
-It looks a bit wired and complicated, but if you know better way to do that, please leave it in a
-comments.
