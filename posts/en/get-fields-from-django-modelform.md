@@ -7,11 +7,11 @@ Image: /images/django.jpg
 Lang: en
 Summary: How to get a list of all fields from Django ModelForm (ready to use solution).
 
-Once I had to cover the form with tests and all fields in TestCase should be set manually and
-updating on every model change. I want to avoid this routine and solution should be simple --- grab
-the list of fields from the ModelForm and iterate over it. But there is a problem: by default, there
-is no way to get a list of fields considering that some of them are excluded or added to form
-manually.
+Somehow I had to cover the form with tests, all fields in TestCase should be set manually and
+updated by hands with every model change. I wanted to avoid this routine, solution should be simple
+--- grab the list of fields from the ModelForm and iterate over it. But there is a problem: by
+default, there is no way to get a list of fields considering that some of them are excluded or added
+to the form manually.
 
 ## Solution
 
