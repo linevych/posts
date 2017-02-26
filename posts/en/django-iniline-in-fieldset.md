@@ -152,7 +152,7 @@ __templates/admin/custom/change_form.html__
 {% load i18n admin_urls static admin_modify %}
 {% block field_sets %}
     {% for fieldset in adminform %}
-        {#  Власний шаблон для виводу fieldset'ів #}
+        {#  Custom fieldsets template #}
         {% include "admin/custom/fieldset.html" with inline_admin_formsets=inline_admin_formsets %}
     {% endfor %}
 {% endblock %}
