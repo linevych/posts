@@ -219,7 +219,7 @@ __templates/admin/custom/fieldset.html__
 
 Після цього ми можемо "насолоджуватись" наступною картиною:
 
-![Django TabularInline in fieldset](images/django-inline-in-fieldset.png)
+![Django TabularInline in fieldset](/images/django-inline-in-fieldset.png)
 
 Залишилось трішки підправити CSS, щоб при вигляді нашої адмінки у перфекціоністів не сіпалось око:
 
@@ -243,7 +243,7 @@ href="https://github.com/linevich/samples/tree/master/inlines_in_fieldsets" targ
 </a>
 </div>
 
-![Inline вставлений в fieldset. Django admin.](images/django-inline-in-fieldset-with-css.png)
+![Inline вставлений в fieldset. Django admin.](/images/django-inline-in-fieldset-with-css.png)
 
 Якщо я зекономив вам трохи часу, будь ласка, поділіться цим постом в Twitter/Facebook або будь-якій
 іншій соціальній мережі, дякую.
