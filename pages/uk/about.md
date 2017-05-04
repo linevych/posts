@@ -5,7 +5,7 @@ Slug: about
 Привіт, мене звати Антон, автор цього блоґу, Full Stack Python Developer
 в [SoftFormance](https://softformance.com){rel=noindex target=_blank}.
 
-![Антон Ліневича](/images/anton.jpg)
+![Антон Ліневич](/images/anton.jpg)
 
 ## Стек технологій
 
