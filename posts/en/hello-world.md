@@ -1,4 +1,4 @@
-Title: Hello world or English verson of the blog.
+Title: Hello world or English verison of the blog
 Date: 2017-02-12
 Slug: hello-world
 Category: From the author
