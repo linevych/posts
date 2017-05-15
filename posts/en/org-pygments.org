@@ -20,8 +20,8 @@ Backend describes rules for processing and converting all elements. The solution
 of my issue --- create my own backend based on existing one and customize
 function that is responsible for code blocks processing.
 
-So, we need a function that will execute the following shell command and then passes an
-output back to the backend.
+So, we need a function that will execute the following shell command and then
+pass an output back to the backend.
 
 #+BEGIN_SRC bash
 
