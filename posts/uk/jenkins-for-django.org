@@ -1,0 +1,242 @@
+#+TITLE: Налаштовуємо Jenkins для багатогілкового Django проекту
+#+DATE: 2016-11-25
+#+CATEGORY: Django
+#+PROPERTY: TAGS django, jenkins, devops, linux, continuous integration, CI, ubuntu, debian
+#+PROPERTY: SLUG django-jenkins 
+#+PROPERTY: IMAGE /images/django.jpg
+#+PROPERTY: LANGUAGE uk
+#+PROPERTY: STATUS DRAFT
+
+Якщо ви читаєте цей пост то очевидно вам набридло щоразу руками запускати тести,
+і ви шукаєте спосіб це автоматизувати.
+
+Вибір пав на Jenkins оскільки він був ідеальним безкоштовним Open Source рішенням для розгортання на
+власному сервері та мав велетенську кількість додатків та інтеграцій, в тому числі й для Django.
+
+** Встановлення
+
+В нашому випадку більшість серверів працює на
+
+-  *OS*: Debian 8 or Ubuntu 16.04
+-  *CPU*: 2 ядра
+-  *RAM*: 1-2GB
+
+[[https://m.do.co/c/6463f665f8bc][DigitalOcean]]{:rel=nofollow} droplet for $20/mo will ideally pass your needs.
+
+Для початку нам потрібно створити користувача для нашого CI сервера:
+
+#+BEGIN_EXAMPLE bash 
+    adduser jenkins su jenkins
+#+END_EXAMPLE
+Тепер додаємо відповідні репозиторії там встановлюємо Jenkins:
+
+#+BEGIN_SRC bash
+    # Працює як для Ubuntu так і для Debian
+    wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | sudo apt-key add - 
+    sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ >  /etc/apt/sources.list.d/jenkins.list'
+    sudo apt-get update
+    sudo apt-get install jenkins -y
+    # Відкриваємо файл конфігурації для редагування
+    sudo nano /etc/default/jenkins 
+#+END_SRC
+
+Також вам потрібно встановити змінну =JENKINS_HOME=/home/$NAME= в файлі =/etc/default/jenkins=.
+
+Після успішоного встановлення ми можемо запустити наш CI сервер:
+
+#+BEGIN_SRC bash
+   systemctl start jenkins
+#+END_SRC
+
+Or if you are systemd hater:
+
+#+BEGIN_SRC bash
+ sudo /etc/init.d/jenkins start 
+#+END_SRC
+
+*** Basic setup
+After Jenkins was run you can access it via =<ip-address>:8080= for me it will
+be =127.0.0.1:8080=.
+
+#+CAPTION: Fresh installation of Jenkins
+[[/images/jenkins/jenkins-password.png]]
+
+You need to enter password which can be get by typing:
+
+#+BEGIN_SRC
+    :::bash #!/bin/bash cat /home/jenkins/secrets/initialAdminPassword
+    a3cc46430ff249df9b1b4ce0ff90dcba # Password example that you would get
+    #+END_SRC
+
+Next step, you will need to choose "Install proposed plugins" and wait until
+installation finished.
+
+#+CAPTION: Installation of suggested plugins
+[[/images/jenkins/jenkins-install-suggested-plugins.png]]
+
+Then you need to create first user:
+
+#+CAPTION: User creation process in jenkins
+[[/images/jenkins/jenkins-create-user.png]]
+
+Installation finished now we can configure our Jenkins instnace.
+
+#+CAPTION: Jenkins is ready to use
+[[/images/jenkins/jenkins-ready-to-use.png]]
+
+** Configuring Jenkins
+*** Installation of necessary plugins
+
+*Before* creation any jobs we need to install plugins because we need specific
+project type support.
+
+First, you need to get to "Manage Jenkins" section:
+
+#+CAPTION: Jenkins is ready to use
+[[/images/jenkins/jenkins-manage.png]]
+
+And then to "Manage plugins": [[/images/jenkins/jenkins-manage-plugins.png]]
+
+Here you need to go to "Available" tab and search & install for following
+plugins:
+
+-  *Multi-Branch Project Plugin* --- allows you to process multiple
+   branches in one time.
+-  *Cobertura Plugin* --- code coverage reports plugin.
+-  *JUnit* / (if not installed)/ --- required for publishing tests
+   results.
+-  /HipChat Plugin (optional)/ --- notify your team if something breaks
+   in the HipChat.
+
+#+CAPTION: Plugins installation | Jenkins
+[[/images/jenkins/jenkins-install-plugins.png]]
+
+*** Setting up new project
+    :PROPERTIES:
+    :CUSTOM_ID: setting-up-new-project
+    :END:
+
+Go to Jenkins start page and press *"Create new jobs"* then enter name of your
+project, and choose *"Freestyle multibranch project"* type.
+
+#+CAPTION: Freestyle multibranch project | Jenkins
+[[/images/jenkins/jenkins-new-project.png]]
+
+At first, we will need to configure VCS for our project, go to section "Branch
+sources" and enter your project URL.
+
+#+CAPTION: Configure VCS for new project | Jenkins
+[[/images/jenkins/jenkins-vcs-configuration.png]]
+
+Also, you will need to enter your credentials to access code, press "Add" -
+"Jenkins" and enter your GitHub username and password or, choose other
+credentials type.
+
+#+CAPTION: Adding new credentials | Jenkins
+[[/images/jenkins/jenkins-access.png]]
+
+In "branch sources" advanced settings you can enter branches which you need to
+test.
+
+#+CAPTION: Adding branch settings
+[[/images/jenkins/jenkins-advanced-vcs-configuration.png]]
+
+Now we need to configure build step --- go to *"Build Configuration"* section
+click *"Add build step"*, and choose *"Execute shell"* from the dropdown menu.
+
+#+CAPTION: Adding branch settings
+[[/images/jenkins/jenkins-build-setup.png]]
+
+In the text area that appears we need to add following code:
+
+#+BEGIN_SRC bash
+
+    cd $WORKSPACE
+
+    # Virtualenv setup
+    virtualenv env --python=/usr/bin/python3.5 env/bin/pip install -r
+    requirements_ci.txt
+
+    # You can add any custom tasks here, or write it into script and place to VCS.
+    # .....
+
+    export DJANGO_SETTINGS_MODULE=porjectname.settings_ci env/bin/python3.5
+    ./manage.py collectstatic --noinput env/bin/python3.5 ./manage.py jenkins
+    --noinput --enable-coverage --parallel 2 
+#+END_SRC
+
+** Django project configuration
+   :PROPERTIES:
+   :CUSTOM_ID: django-project-configuration
+   :END:
+*** Requirements
+    :PROPERTIES:
+    :CUSTOM_ID: requirements
+    :END:
+
+To avoid unnecessary packages in main project virtualenv we will need to create
+=requiements_ci.txt= file that extends your basic project requirements list.
+
+#+BEGIN_SRC bash
+    -r requirements.txt django-jenkins coverage pyflakes tblib
+ #+END_SRC
+
+*** Separated settings for CI
+    :PROPERTIES:
+    :CUSTOM_ID: separated-settings-for-ci
+    :END:
+
+We will need to create separate settings file named =settings_ci.py= with the
+following code:
+
+#+BEGIN_SRC python
+  import string import random
+  from .settings import *
+
+
+  def id_generator(size=10, chars=string.ascii_uppercase + string.digits):
+      """
+      Generates random name for database.
+      """
+      return ''.join(random.choice(chars) for _ in range(size))
+
+
+  DEBUG = True
+
+  INTERNAL_IPS = ['127.0.0.1', 'localhost', 'example.com']
+  ALLOWED_HOSTS = INTERNAL_IPS
+
+  user = 'postgres' password = 'postgres' host = '127.0.0.1' port = '5432'
+  # Random name to avoid errors during multiple branches parallel testing
+  db = id_generator()
+
+
+  DATABASES = {
+      'default': {
+          'ENGINE': 'django.db.backends.postgresql_psycopg2',
+          'NAME': db,
+          'USER': user,
+          'PASSWORD': password,
+          'HOST': host,
+          'PORT': port,
+      }
+  }
+
+
+  INSTALLED_APPS += [ 'django_jenkins', ]
+
+  JENKINS_TASKS = (
+      'django_jenkins.tasks.run_pep8',
+      'django_jenkins.tasks.run_pyflakes',
+  )
+#+END_SRC
+
+This is basic setup, for more information you can read
+[[https://github.com/kmmbvnr/django-jenkins/blob/master/README.rst][django-jenkins
+documentation]]{:rel=nofollow}.
+
+** Manage final result
+** Sources
+1. [[https://wiki.jenkins-ci.org/display/JENKINS/Installing+Jenkins+on+Ubuntu][Installing Jenkins on Ubuntu --- Jenkins --- Jenkins Wiki]]{:rel=nofollow}.
+2. [[http://www.slideshare.net/kevincreedharvey/continuous-integration-testing-django-ap][Continious Integration Testing]]{:rel=nofollow}.
+3. [[http://stackoverflow.com/questions/21839538/change-jenkins-home-on-red-hat-linux][jenkins --- Change JENKINS\_HOME on Red Hat Linux? --- Stack Overflow]]{:rel=nofollow}.
