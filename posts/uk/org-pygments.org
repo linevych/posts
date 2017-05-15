@@ -1,0 +1,91 @@
+#+TITLE: Підсвітка блоків з кодом в Org-mode за допомогою Pygments
+#+CATEGORY: Emacs
+#+DATE: 2017-05-15
+#+PROPERTY: LANGUAGE uk
+#+PROPERTY: TAGS emacs, elsip, org-mode, blogging, pelican
+#+PROPERTY: IMAGE /images/org-pygments.png
+#+OPTIONS: toc:nil
+#+OPTIONS: num:nil
+
+За замовчуванням, Org майже ніяк не підсвічує синтаксис у блоках коду при експорті в HTML.
+Попри всю потужність Org, це стає серйозним плюсом на користь комбінації Pelican + Markdown
+ для ведення блогу. Не знайшовши ніякого адекватного рішення, яке було хоча б наближено схоже на те,
+ що пропонує [[http://pygments.org/docs][Pygments]] в Pelican я вирішив додати його підтримку і в Org-mode.
+
+** Як це повинно працювати?
+   
+При експорті в певний формат, org-mode використовує спеціальний бекенд в якому описуються правила
+для обробки і конвертування усіх елементів. Вирішення мого завдання --- створити власний бекенд на
+основі існуючого і змінити функції які відповідають за обробку блоків коду.
+
+Отже, нам потрібна функція яка виконуватиме наступну shell-команду та віддаватиме вивід в бекенд. 
+
+#+BEGIN_SRC bash
+
+pygmentize -l <синтаксис> -f html <вхідний_файл>
+
+#+END_SRC
+
+Буде значно простіше писати блоки коду в тимчасові файли, а потім віддавати їх скрипту ніж
+намагатись екранувати всі можливі символи для вводу через =stdin=.
+
+** Реалізація
+На основі [[https://github.com/jwiegley/org-mode/blob/master/lisp/ox-html.el][вихідного коду]] бекенду для експорту в HTML та пишемо власну функцію для обробки коду яка
+прийматиме на вхід 3 параметри. Нас цікавить параметр =code= який являє собою =org-element=.
+
+Згідно [[http://orgmode.org/worg/dev/org-element-api.html#orgheadline44][Org-mode API]] для об'єкту "Src Block" на потрібно отримати значення властивостей =:language=
+та =:value= що відповідають за синтаксис та вихідний текст відповідно.
+
+#+BEGIN_SRC emacs-lisp
+(require 'org)
+(require 'ox)
+(require 'ox-html)
+
+;; Шлях до pygments або назва команди
+(defvar pygments-path "pygmentize")
+
+(defun pygments-org-html-code (code contents info)
+  ;; Генеруємо шлях для тимчасового файлу
+  ;; Хеш поточного часу і дати ідеально підійде під це завдання.
+  (setq temp-source-file(format "/tmp/pygmentize-%s.txt"(md5 (current-time-string))))
+  ;; Пишемо вміст блоку в тимчасовий файл
+  (with-temp-file temp-source-file (insert (org-element-property :value code)))
+  ;; Запускаємо shell-комаду і отримуємо вивід
+  (shell-command-to-string (format "%s -l \"%s\" -f html %s"
+                                   pygments-path
+                                   (or (org-element-property :language code)
+                                       "")
+                                   temp-source-file)))
+
+#+END_SRC
+
+Тепер оголосимо новий бекенд =pelican-html= на основі =html= і замінимо в ньому функції для
+=src-block= та =example-block=:
+
+#+BEGIN_SRC emacs-lisp
+(org-export-define-derived-backend 'pelican-html 'html
+  :translate-alist '((src-block .  pygments-org-html-code)
+                     (example-block . pygments-org-html-code)))
+
+#+END_SRC
+
+
+Варто зауважити, що не зважаючи на те, що в API властивість =:language= для =example-block= присутня
+--- на практиці цей об'єкт її не підтримує (схоже це баг в документації), тому задання синтаксису
+працюватиме лише для =src-block=.
+
+** Застосування
+
+В моєму випадку цей бекенд використовується для експорту постів через [[http://orgmode.org/worg/dev/org-export-reference.html][org-reader]] для Pelican, а не
+напряму через буфер Emacs. Вихідний код мого блогу і робочий приклад конфігурації для експорту можна
+знайти [[https://github.com/linevich/blog][тут]].
+
+Для детальної інформації по налаштуванню експорту через Emacs та налаштування бекенду перегляньте
+[[http://orgmode.org/worg/dev/org-export-reference.html][документацію]].
+
+** Використані матеріали
+
+1. [[https://emacs.stackexchange.com/questions/10771/how-to-use-my-custom-layout-for-generating-html-files-from-org-files-instead-of][Emacs StackExchange: How to use my custom layout for generating HTML files from org files instead
+   of using the default layout?]]
+2. [[http://pygments.org/docs/cmdline][Pygments: Command Line Interface]]
+3. [[http://orgmode.org/worg/dev/org-element-api.html][Org Element API]]
