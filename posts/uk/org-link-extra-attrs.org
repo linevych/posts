@@ -1,0 +1,135 @@
+#+TITLE: Додаємо атрибути до посилань Org-mode
+#+CATEGORY: Emacs
+#+DATE: 2017-06-14
+#+PROPERTY: LANGUAGE uk
+#+PROPERTY: TAGS emacs, elsip, org-mode, blogging
+#+PROPERTY: IMAGE /images/org-pygments.png
+#+OPTIONS: toc:nil
+#+OPTIONS: num:nil
+
+* Проблема
+
+Місяць тому я [[https://emacs.stackexchange.com/questions/32779/how-to-set-rel-nofollow-as-default-for-links-in-org-export-to-html|:rel%20noindex,nofollow][запитував]] на Emacs StackExchange як можна задати атрибут ~rel="nofollow"~ для посилань
+в Org-mode, тоді остаточного практичного рішення знайдено не було, а проблема так нікуди і не
+зникла.
+
+Org пропонує штатні "милиці" для вирішення цього завдання:
+
+#+BEGIN_SRC 
+
+#+ATTR_HTML: rel=nofollow
+Lorem ispum [[https://example.com][dolor]]!
+
+#+END_SRC
+
+Що в результаті перетвориться на:
+
+#+BEGIN_SRC html
+<p rel="nofollow">Lorem ispum <a href="https://example.com" rel="nofollow">dolor</a>!</p>
+#+END_SRC
+
+Виглядає це все вкрай жахливо, і сенсу користуватись таким рішенням я не бачу жодного.
+
+* Ідея
+
+Я вирішив дещо змінити синтаксис посилань, при цьому не ламаючи зворотню сумісність.
+
+#+BEGIN_SRC
+[[https://example.com#|:rel nofollow :title View example.com]][Here is my link]]
+#+END_SRC
+
+Має трансформуватись в:
+
+#+BEGIN_SRC html
+<a href="https://example.com#" rel="nofollow" title="View example.com">Here is my link</a>
+#+END_SRC
+
+Виглядає значно краще ніж штатний варіант. Навіть якщо інший користувач в стоковому org-mode
+експортуватиме цей фрагмент то поламається лише "якір" (anchor), що в більшості випадків не є
+критичним.
+
+* Реалізація
+Після довгих пошуків по безкінечному коду Org було знайдено функцію яка відповідає за парсинг і
+формування об'єкту посилання --- [[https://github.com/jwiegley/org-mode/blob/433103fc5e5bb6d401e37707703a652683b859eb/lisp/org-element.el|:rel%20noindex,nofollow%20:title%20View%20org-element-link-parser%20source%20on%20Github][=org-element-link-parser=]].
+
+Для додавання парсингу додаткових параметрів ідеально підходить advice =:filter-retun= який повертає
+значення оригінальної функції в advice-функцію для подальшої обробки.
+
+#+BEGIN_SRC emacs-lisp
+(require 's)
+(require 'dash)
+
+(defun pelican/org-link-extra-attrs (orig-fun &rest args)
+  "Пост процесор для парсингу посилань"
+  (setq parser-result orig-fun)
+
+  ;;; Отримуємо початкові значення які потрібно замінити
+  (setq raw-path (plist-get (nth 1 parser-result) :raw-link))
+  (setq path (plist-get (nth 1 parser-result) :raw-link))
+
+  ;; Перевіряємо чи посилання відповідає регулярно виразу
+  (if (string-match-p "^https?://.*|\s?:" raw-path)
+      (progn
+        ;; Отримуємо параметри після вертикального слешу і декодуємо їх
+        (setq results (s-split "|" (url-unhex-string raw-path)))
+        ;; Очищаємо URL
+        (setq raw-path (car results))
+        (setq path (car (s-split "|" path)))
+
+        ;; Розділяємо елементи за двокрапою і видаляємо пусті елементи (якщо є)
+        (setq results (--drop-while (< (length it) 1)
+                                    (s-split ":" (car (-slice results 1)))))
+        ;; Розділяємо ключ і значення і видаляємо зайві пробіли
+        (setq results (--map  (s-split-up-to "\s" (s-trim it) 1) results))
+        ;; Оновлюємо вивід парсера новими атрибутами
+
+        (setq orig-fun-cleaned (plist-put (nth 1 orig-fun) :raw-link raw-path))
+        (setq orig-fun-cleaned (plist-put orig-fun-cleaned :path path))
+
+        (list 'link
+              (-snoc orig-fun-cleaned :extra-attrs results)))
+
+         ;; Або повертаємо значення оригінальної функції
+         orig-fun))
+
+(advice-add 'org-element-link-parser :filter-return #'pelican/org-link-extra-attrs)
+#+END_SRC
+
+Тепер залишилось додати підтримку нових атрибутів парсеру при експорті посилань в HTML.
+
+#+BEGIN_SRC emacs-lisp
+(defun pelican/link-html (link desc info)
+  "Процесор власного синтаксисису для задання атрибутів посилань.
+Синтаксис: [[http://example.com/#|:attr value][Link text]]"
+
+  (setq extra-attrs (org-element-property :extra-attrs link))
+  (setq processed-link-html (org-html-link link desc info))
+  
+;; Якщо посилання має будь які атрибути
+  (if extra-attrs
+      (progn
+        ;; Створюємо форматований рядок атрибутів в форматі key="value"
+        (setq extra-attrs
+              (s-trim (--reduce-from (concat acc " "
+                                             (format "%s=%s" (nth 0 it)
+                                                     (s-wrap (nth 1 it)  "\""))) "" extra-attrs)))
+
+        ;; Вставляємо параметри в тег посилання
+        ;; Приклад: <a href="#" name="Foo">Bar</a>
+        (setq insert-point (string-match ">" processed-link-html))
+        (setq processed-link-html
+              (concat (substring  processed-link-html 0 insert-point)
+                      extra-attrs
+                      (substring processed-link-html insert-point))))
+    ;; Повертаємо HTML
+    processed-link-html))
+
+;; Долдаємо налаштування до власного бекенду
+(org-export-define-derived-backend 'pelican-html 'html
+  :translate-alist '((link . pelican/link-html)))
+#+END_SRC
+
+* Покращення?
+Наразі даний варіант не дозволяє задавати атрибути для абсолютно всіх посилань в документі, але я
+планую додати цю функцію в наступній публікації. Повний код власного бекенду можна переглянути в
+[[https://github.com/linevich/blog/blob/master/lisp/pelican-html.el][репозиторії на Github]].
