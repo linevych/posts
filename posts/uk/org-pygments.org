@@ -81,7 +81,7 @@ pygmentize -l <синтаксис> -f html <вхідний_файл>
 знайти [[https://github.com/linevich/blog][тут]].
 
 Для детальної інформації по налаштуванню експорту через Emacs та налаштування бекенду перегляньте
-[[http://orgmode.org/worg/dev/org-export-reference.html][документацію]].
+[[http://orgmode.org/worg/dev/org-export-reference.html|:rel%20nofollow][документацію]].
 
 ** Використані матеріали
 
