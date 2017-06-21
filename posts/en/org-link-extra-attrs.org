@@ -8,10 +8,6 @@
 #+OPTIONS: num:nil
 
 * Problem 
-
-About a month ago I [[https://emacs.stackexchange.com/questions/32779/how-to-set-rel-nofollow-as-default-for-links-in-org-export-to-html|:rel%20noindex,nofollow][asked]] on Emacs StackExchange about how to set ~rel="nofollow"~ an attribute for
-links in Org-mode. I didn't get any workable solution but the problem still exists.
-
 In general, Org has a generic "solution" for this task:
 
 #+BEGIN_SRC 

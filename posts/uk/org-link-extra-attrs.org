@@ -9,10 +9,6 @@
 
 * Проблема
 
-Місяць тому я [[https://emacs.stackexchange.com/questions/32779/how-to-set-rel-nofollow-as-default-for-links-in-org-export-to-html|:rel%20noindex,nofollow][запитував]] на Emacs StackExchange про те як задати атрибут ~rel="nofollow"~ для
-посилань в Org-mode. Остаточного практичного рішення знайдено не було, а проблема так нікуди і не
-зникла.
-
 В загальному, Org пропонує штатні "милиці" для вирішення цього завдання:
 
 #+BEGIN_SRC 
