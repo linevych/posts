@@ -1,0 +1,129 @@
+#+TITLE: How to add extra attributes to link in Org-mode?
+#+CATEGORY: Emacs
+#+DATE: 2017-06-21
+#+PROPERTY: LANGUAGE en
+#+PROPERTY: TAGS emacs, elsip, org-mode, blogging
+#+PROPERTY: IMAGE /images/org-extra-attrs.png
+#+OPTIONS: toc:nil
+#+OPTIONS: num:nil
+
+* Problem 
+
+About a month ago I [[https://emacs.stackexchange.com/questions/32779/how-to-set-rel-nofollow-as-default-for-links-in-org-export-to-html|:rel%20noindex,nofollow][asked]] on Emacs StackExchange about how to set ~rel="nofollow"~ an attribute for
+links in Org-mode. I didn't get any workable solution but the problem still exists.
+
+In general, Org has a generic "solution" for this task:
+
+#+BEGIN_SRC 
+
+#+ATTR_HTML: :rel nofollow
+Lorem ispum [[https://example.com][dolor]]!
+
+#+END_SRC
+
+That will be exported to:
+
+#+BEGIN_SRC html
+<p rel="nofollow">Lorem ispum <a href="https://example.com" rel="nofollow">dolor</a>!</p>
+#+END_SRC
+
+That in my very honest opinion it looks really awful.
+
+* Idea
+
+I've decided to slightly change the link syntax but without breaking backwards compatibility:
+
+#+BEGIN_SRC
+[[https://example.com#|:rel nofollow :title View example.com]][Here is my link]]
+#+END_SRC
+
+This should be exported to:
+
+#+BEGIN_SRC html
+<a href="https://example.com#" rel="nofollow" title="View example.com">Here is my link</a>
+#+END_SRC
+
+Looks a way better than the default solution. Even if end-user will user vanilla org-mode to export
+this piece all should be workable except the link anchor that's is not critical in most cases.
+
+* Implementation
+
+
+After long looking through the endless code of the Org I found a function that is responsible for
+parsing link and providing link object --- [[https://github.com/jwiegley/org-mode/blob/433103fc5e5bb6d401e37707703a652683b859eb/lisp/org-element.el|:rel%20noindex,nofollow%20:title%20View%20org-element-link-parser%20source%20on%20Github][=org-element-link-parser=]].
+
+To add extra parameters to parser I've used advice =:filter-retun= --- it returns the value for the
+original function to the advice-function for the further processing.
+
+#+BEGIN_SRC emacs-lisp
+(require 's)
+(require 'dash)
+
+(defun pelican/org-link-extra-attrs (orig-fun &rest args)
+  "Post processor for parsing links"
+  (setq parser-result orig-fun)
+
+  ;;; Retrieving inital values that should be replaced
+  (setq raw-path (plist-get (nth 1 parser-result) :raw-link))
+  (setq path (plist-get (nth 1 parser-result) :raw-link))
+
+  ;; Checking if link match the regular expression
+  (if (string-match-p "^https?://.*|\s?:" raw-path)
+      (progn
+        ;; Retrieving and decoding parameters after the vertical bar
+        (setq results (s-split "|" (url-unhex-string raw-path)))
+        ;; URL cleanup
+        (setq raw-path (car results))
+        (setq path (car (s-split "|" path)))
+
+        ;; Splitting elements by colon and remove any empty values
+        (setq results (--drop-while (< (length it) 1)
+                                    (s-split ":" (car (-slice results 1)))))
+        ;; Splitting key and value and trimming any spaces
+        (setq results (--map  (s-split-up-to "\s" (s-trim it) 1) results))
+
+        ;; Updating the ouput with the new values
+        (setq orig-fun-cleaned (plist-put (nth 1 orig-fun) :raw-link raw-path))
+        (setq orig-fun-cleaned (plist-put orig-fun-cleaned :path path))
+
+        (list 'link
+              (-snoc orig-fun-cleaned :extra-attrs results)))
+
+         ;; Or returning original value of the function
+         orig-fun))
+
+(advice-add 'org-element-link-parser :filter-return #'pelican/org-link-extra-attrs)
+#+END_SRC
+
+Now we need to add the support of the new attributes to the parser for the HTML exporting backend.
+
+#+BEGIN_SRC emacs-lisp
+(defun pelican/link-html (link desc info)
+  "Custom syntax processor for extra link atrributes
+  Syntax: [[http://example.com/#|:attr value][Link text]]"
+
+  (setq extra-attrs (org-element-property :extra-attrs link))
+  (setq processed-link-html (org-html-link link desc info))
+  
+  ;; If link has any atrributes
+  (if extra-attrs
+      (progn
+        ;; Creating string formated as key="value"
+        (setq extra-attrs
+              (s-trim (--reduce-from (concat acc " "
+                                             (format "%s=%s" (nth 0 it)
+                                                     (s-wrap (nth 1 it)  "\""))) "" extra-attrs)))
+
+        ;; Inserting atrribute string to link tag
+        (setq insert-point (string-match ">" processed-link-html))
+        (setq processed-link-html
+              (concat (substring  processed-link-html 0 insert-point)
+                      extra-attrs
+                      (substring processed-link-html insert-point))))
+    ;; HTML output
+    processed-link-html))
+
+;; Custom backend settings
+(org-export-define-derived-backend 'pelican-html 'html
+  :translate-alist '((link . pelican/link-html)))
+#+END_SRC

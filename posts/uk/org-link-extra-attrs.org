@@ -1,23 +1,23 @@
 #+TITLE: Додаємо атрибути до посилань Org-mode
 #+CATEGORY: Emacs
-#+DATE: 2017-06-14
+#+DATE: 2017-06-21
 #+PROPERTY: LANGUAGE uk
 #+PROPERTY: TAGS emacs, elsip, org-mode, blogging
-#+PROPERTY: IMAGE /images/org-pygments.png
+#+PROPERTY: IMAGE /images/org-extra-attrs.png
 #+OPTIONS: toc:nil
 #+OPTIONS: num:nil
 
 * Проблема
 
-Місяць тому я [[https://emacs.stackexchange.com/questions/32779/how-to-set-rel-nofollow-as-default-for-links-in-org-export-to-html|:rel%20noindex,nofollow][запитував]] на Emacs StackExchange як можна задати атрибут ~rel="nofollow"~ для посилань
-в Org-mode, тоді остаточного практичного рішення знайдено не було, а проблема так нікуди і не
+Місяць тому я [[https://emacs.stackexchange.com/questions/32779/how-to-set-rel-nofollow-as-default-for-links-in-org-export-to-html|:rel%20noindex,nofollow][запитував]] на Emacs StackExchange про те як задати атрибут ~rel="nofollow"~ для
+посилань в Org-mode. Остаточного практичного рішення знайдено не було, а проблема так нікуди і не
 зникла.
 
-Org пропонує штатні "милиці" для вирішення цього завдання:
+В загальному, Org пропонує штатні "милиці" для вирішення цього завдання:
 
 #+BEGIN_SRC 
 
-#+ATTR_HTML: rel=nofollow
+#+ATTR_HTML: :rel nofollow
 Lorem ispum [[https://example.com][dolor]]!
 
 #+END_SRC
@@ -45,7 +45,7 @@ Lorem ispum [[https://example.com][dolor]]!
 #+END_SRC
 
 Виглядає значно краще ніж штатний варіант. Навіть якщо інший користувач в стоковому org-mode
-експортуватиме цей фрагмент то поламається лише "якір" (anchor), що в більшості випадків не є
+експортуватиме цей фрагмент, то поламається лише "якір" (anchor), що в більшості випадків не є
 критичним.
 
 * Реалізація
@@ -67,7 +67,7 @@ Lorem ispum [[https://example.com][dolor]]!
   (setq raw-path (plist-get (nth 1 parser-result) :raw-link))
   (setq path (plist-get (nth 1 parser-result) :raw-link))
 
-  ;; Перевіряємо чи посилання відповідає регулярно виразу
+  ;; Перевіряємо чи посилання відповідає регулярному виразу
   (if (string-match-p "^https?://.*|\s?:" raw-path)
       (progn
         ;; Отримуємо параметри після вертикального слешу і декодуємо їх
@@ -124,12 +124,8 @@ Lorem ispum [[https://example.com][dolor]]!
     ;; Повертаємо HTML
     processed-link-html))
 
-;; Долдаємо налаштування до власного бекенду
+;; Додаємо налаштування до власного бекенду
 (org-export-define-derived-backend 'pelican-html 'html
   :translate-alist '((link . pelican/link-html)))
 #+END_SRC
 
-* Покращення?
-Наразі даний варіант не дозволяє задавати атрибути для абсолютно всіх посилань в документі, але я
-планую додати цю функцію в наступній публікації. Повний код власного бекенду можна переглянути в
-[[https://github.com/linevich/blog/blob/master/lisp/pelican-html.el][репозиторії на Github]].
