@@ -1,0 +1,38 @@
+#+TITLE: Як змінити клавішу відкривання головного меню в Gnome Shell
+#+CATEGORY: Linux
+#+DATE: 2017-11-02
+#+PROPERTY: LANGUAGE uk
+#+PROPERTY: TAGS gnome, tips, keyboard, linux, debian
+#+PROPERTY: IMAGE /images/gnome-shell.png
+#+OPTIONS: toc:nil
+#+OPTIONS: num:nil
+
+Часом я страждаю на страшну недугу яка називається /Rukozhopius Syndrom/, внаслідок якої мені
+довелось змінити не одну клавіатуру і відучити себе пити будь-що солодке біля комп'ютера (ну майже).
+
+Так склались зірки, що я не помітив відсутність лівої клавіші Super (Windows) на розкладці нової
+клавіатури, яка в Gnome 3 відповідає за відкриття головного меню. Так як я друкую двома руками і в
+більшості випадків не користуюсь мишкою, то права клавіша Super є доволі прийнятним варіантом.
+
+Через консоль проблема вирішується доволі просто:
+
+#+BEGIN_SRC bash
+gsettings set org.gnome.mutter overlay-key 'SUPER_R'
+#+END_SRC
+
+Повернути все як було:
+
+#+BEGIN_SRC bash
+gsettings set org.gnome.mutter overlay-key 'SUPER_L'
+#+END_SRC
+
+Або зовсім вимкнути:
+
+#+BEGIN_SRC bash 
+gsettings set org.gnome.mutter overlay-key ''
+#+END_SRC
+
+#+CAPTION: Моя клавіатура Canyon CNS-HKB3-SK
+[[./images/new-keyboard.jpg]]
+
+Джерело: [[https://superuser.com/questions/484686/disable-default-gnome-shell-super-key-mapping|:rel%20nofollow][Disable default Gnome Shell Super Key Mapping - Super User]].
